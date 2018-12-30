@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestENETCSharp", "TestENETC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ENETCSharp", "ENETCSharp\ENETCSharp.csproj", "{C1169E78-D0D4-435C-9792-AC12DA38556E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestENETCSharpServer", "TestENETCSharpServer\TestENETCSharpServer.csproj", "{B2C21D19-AAF9-410C-87B4-33A02333FBFE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{C1169E78-D0D4-435C-9792-AC12DA38556E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C1169E78-D0D4-435C-9792-AC12DA38556E}.Release|x64.ActiveCfg = Release|x64
 		{C1169E78-D0D4-435C-9792-AC12DA38556E}.Release|x64.Build.0 = Release|x64
+		{B2C21D19-AAF9-410C-87B4-33A02333FBFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2C21D19-AAF9-410C-87B4-33A02333FBFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2C21D19-AAF9-410C-87B4-33A02333FBFE}.Debug|x64.ActiveCfg = Debug|x64
+		{B2C21D19-AAF9-410C-87B4-33A02333FBFE}.Debug|x64.Build.0 = Debug|x64
+		{B2C21D19-AAF9-410C-87B4-33A02333FBFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2C21D19-AAF9-410C-87B4-33A02333FBFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2C21D19-AAF9-410C-87B4-33A02333FBFE}.Release|x64.ActiveCfg = Release|Any CPU
+		{B2C21D19-AAF9-410C-87B4-33A02333FBFE}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,27 +7,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestENETCSharp
+namespace TestENETCSharpServer
 {
     class Program
     {
         static void Main(string[] args)
         {
             Library.Initialize();
-            using (Host client = new Host())
+            using (Host server = new Host())
             {
                 Address address = new Address();
 
-                address.SetHost("127.0.0.1");
                 address.Port = 9900;
-                client.Create();
-
-                Peer peer = client.Connect(address);
+                server.Create(address, 10);
 
                 Event netEvent;
                 while (!Console.KeyAvailable)
                 {
-                    client.Service(15, out netEvent);
+                    server.Service(15, out netEvent);
 
                     switch (netEvent.Type)
                     {
@@ -35,25 +32,25 @@ namespace TestENETCSharp
                             break;
 
                         case EventType.Connect:
-                            Console.WriteLine("Client connected to server - ID: " + peer.ID);
+                            Console.WriteLine("Client connected - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
                             break;
 
                         case EventType.Disconnect:
-                            Console.WriteLine("Client disconnected from server");
+                            Console.WriteLine("Client disconnected - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
                             break;
 
                         case EventType.Timeout:
-                            Console.WriteLine("Client connection timeout");
+                            Console.WriteLine("Client timeout - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
                             break;
 
                         case EventType.Receive:
-                            Console.WriteLine("Packet received from server - Channel ID: " + netEvent.ChannelID + ", Data length: " + netEvent.Packet.Length);
+                            Console.WriteLine("Packet received from - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP + ", Channel ID: " + netEvent.ChannelID + ", Data length: " + netEvent.Packet.Length);
                             netEvent.Packet.Dispose();
                             break;
                     }
                 }
 
-                client.Flush();
+                server.Flush();
                 Library.Deinitialize();
             }
         }
