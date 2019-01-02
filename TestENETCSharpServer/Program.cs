@@ -11,6 +11,22 @@ namespace TestENETCSharpServer
 {
     class Program
     {
+
+        /// <summary>
+        /// Base client.
+        /// </summary>
+        public class BaseClient
+        {
+            public ENETCSharp.Peer PeerClient { get; set; }
+            public uint PeerID { get; set; }
+        }
+
+        private List<BaseClient> m_entities = new List<BaseClient>();
+
+        /// <summary>
+        /// The entry point of the program, where the program control starts and ends.
+        /// </summary>
+        /// <param name="args">The command-line arguments.</param>
         static void Main(string[] args)
         {
             Library.Initialize();
@@ -19,7 +35,9 @@ namespace TestENETCSharpServer
                 Address address = new Address();
 
                 address.Port = 9900;
-                server.Create(address, 10);
+                // 10 Channels
+                // 10 Peers
+                server.Create(address, 10, 10);
 
                 Event netEvent;
                 while (!Console.KeyAvailable)
