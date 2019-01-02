@@ -977,8 +977,12 @@ namespace ENETCSharp
     internal static class Native
     {
 #if __IOS__ || UNITY_IOS && !UNITY_EDITOR
-			private const string nativeLibrary = "__Internal";
-#else
+		private const string nativeLibrary = "__Internal";
+#elif __MAC__
+        // Code for Mono C# compiler.
+        private const string nativeLibrary = "enet.dylib"
+#elif
+        // Code for Microsoft C# compiler.
         private const string nativeLibrary = "enet";
 #endif
 
