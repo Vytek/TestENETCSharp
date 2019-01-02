@@ -11,6 +11,17 @@ namespace TestENETCSharpServer
 {
     class Program
     {
+        /// <summary>
+        /// Op codes.
+        /// </summary>
+        public enum OpCodes
+        {
+            Spawn,
+            UnSpawn,
+            Destroy,
+            PlayerPositionUpdate,
+            ObjectPositionUpdate
+        }
 
         /// <summary>
         /// Base client.
