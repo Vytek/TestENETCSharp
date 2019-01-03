@@ -22,7 +22,8 @@ namespace TestENETCSharpServer
         /// </summary>
         public enum OpCodes
         {
-            PlayerJoinLogin,
+            PlayerLogin,
+            PlayerJoin,
             PlayerSpawn,
             PlayerUnSpawn,
             ObjectSpawn,
@@ -163,6 +164,11 @@ namespace TestENETCSharpServer
 
             OpCodes op = (OpCodes)buffer.ReadInt();
             uint id = buffer.ReadUInt();
+            if (DEBUG)
+            {
+                Console.WriteLine($"OPCODE: {op.ToString()}");
+                Console.WriteLine($"PEERID: {id.ToString()}");
+            }
 
             if (evt.Peer.ID != id)
             {
@@ -174,8 +180,9 @@ namespace TestENETCSharpServer
 
             switch (op)
             {
-                case OpCodes.PlayerJoinLogin:
-
+                case OpCodes.PlayerLogin:
+                    //Answer OK
+                    SendToSingleClient(CreateAnswerPacketLogin("OK", evt.Peer.ID), evt.Peer.ID);
                     break;
             }
         }
@@ -196,14 +203,14 @@ namespace TestENETCSharpServer
         /// Sends to others.
         /// </summary>
         /// <param name="_packet">Packet.</param>
-        /// <param name="_ExcludePeerID">Exclude peer identifier.</param>
-        private void SendToOthers(Packet _packet, uint _ExcludePeerID)
+        /// <param name="_ExcludedPeerID">Exclude peer identifier.</param>
+        private void SendToOthers(Packet _packet, uint _ExcludedPeerID)
         {
             for (int i = 0; i < m_entities.Count; i++)
             {
-                if (m_entities[i].PeerID != _ExcludePeerID)
+                if (m_entities[i].PeerID != _ExcludedPeerID)
                 {
-                    m_entities[i].PeerClient.Send((byte)ChannelTypes.SENDTOSERVER, ref _packet);
+                    m_entities[i].PeerClient.Send((byte)ChannelTypes.SENDTOOTHER, ref _packet);
                 }
             }
         }
@@ -222,6 +229,26 @@ namespace TestENETCSharpServer
                     m_entities[i].PeerClient.Send((byte)ChannelTypes.SENDTOSERVER, ref _packet);
                 }
             }
+        }
+
+        /// <summary>
+        /// Creates the answer packet login.
+        /// </summary>
+        /// <returns>The answer packet login.</returns>
+        /// <param name="Message">Message.</param>
+        /// <param name="_toPeerID">To peer identifier.</param>
+        public Packet CreateAnswerPacketLogin(String Message, uint _toPeerID)
+        {
+            byte[] data = new byte[16];
+            BitBuffer buffer = new BitBuffer(128);
+            buffer.AddInt((int)OpCodes.PlayerLogin)
+                .AddUInt(_toPeerID)
+                .AddString(Message)
+                .ToArray(data);
+
+            Packet packet = default(Packet);
+            packet.Create(data);
+            return packet;
         }
 
         /// <summary>
