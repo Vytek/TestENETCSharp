@@ -11,6 +11,32 @@ namespace TestENETCSharp
 {
     class Program
     {
+        /// <summary>
+        /// Op codes.
+        /// </summary>
+        public enum OpCodes
+        {
+            PlayerLogin,
+            PlayerJoin,
+            PlayerSpawn,
+            PlayerUnSpawn,
+            ObjectSpawn,
+            ObjectUnSpawn,
+            PlayerPositionRotationUpdate,
+            ObjectPositionRotationUpdate
+        }
+
+        /// <summary>
+        /// Channel type.
+        /// </summary>
+        public enum ChannelTypes : byte
+        {
+            SENDTOALL = 0,
+            SENDTOOTHER = 1,
+            SENDTOSERVER = 2,
+            SENDTOUID = 3 //NOT IMPLEMENTED
+        }
+
         static void Main(string[] args)
         {
             Library.Initialize();
@@ -23,6 +49,9 @@ namespace TestENETCSharp
                 client.Create();
 
                 Peer peer = client.Connect(address);
+
+                //Start login to server
+                //
 
                 Event netEvent;
                 while (!Console.KeyAvailable)
@@ -54,7 +83,10 @@ namespace TestENETCSharp
                 }
 
                 client.Flush();
+                client.Dispose();
                 Library.Deinitialize();
+                //Exit 0
+                Environment.Exit(0);
             }
         }
     }
