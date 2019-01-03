@@ -980,8 +980,8 @@ namespace ENETCSharp
 		private const string nativeLibrary = "__Internal";
 #elif __MAC__
         // Code for Mono C# compiler.
-        private const string nativeLibrary = "enet.dylib"
-#elif
+        private const string nativeLibrary = "enet.dylib";
+#elif __WIN__
         // Code for Microsoft C# compiler.
         private const string nativeLibrary = "enet";
 #endif
