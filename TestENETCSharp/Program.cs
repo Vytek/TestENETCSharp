@@ -66,7 +66,10 @@ namespace TestENETCSharp
         /// <param name="toPeerServer">To peer server.</param>
         private static bool SendToServer(Packet _packet, Peer toPeerServer)
         {
-            return toPeerServer.Send((byte)ChannelTypes.SENDTOSERVER, ref _packet);
+            Console.WriteLine($"Client {toPeerServer.State.ToString()}");
+            //return toPeerServer.Send((byte)ChannelTypes.SENDTOSERVER, ref _packet);
+            toPeerServer.Send()
+            return toPeerServer.Send((Byte)ChannelTypes.SENDTOSERVER, ref _packet);
         }
 
         /// <summary>
@@ -82,9 +85,13 @@ namespace TestENETCSharp
 
                 address.SetHost("127.0.0.1");
                 address.Port = 9900;
+                //client.Create(1,10); 
                 client.Create();
 
-                Peer peer = client.Connect(address);
+                //Connect to HOST with 10 Channels limit
+                //If you NOT declare Channels limit you had to use only one channel (0)
+                //If you try to send packet 1 (e.g.), packet will not been sent!
+                Peer peer = client.Connect(address, 10);
                 //Send Request once
                 bool SendRequestPacketLogin = true;
 

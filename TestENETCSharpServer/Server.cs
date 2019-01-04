@@ -136,9 +136,9 @@ namespace TestENETCSharpServer
                             break;
 
                         case EventType.Receive:
+                            Console.WriteLine("Packet received from - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP + ", Channel ID: " + netEvent.ChannelID + ", Data length: " + netEvent.Packet.Length);
                             //Process packet received!
                             ProcessPacket(netEvent);
-                            Console.WriteLine("Packet received from - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP + ", Channel ID: " + netEvent.ChannelID + ", Data length: " + netEvent.Packet.Length);
                             netEvent.Packet.Dispose();
                             break;
                     }
@@ -158,7 +158,7 @@ namespace TestENETCSharpServer
         /// <param name="evt">Evt.</param>
         private void ProcessPacket(Event evt)
         {
-            byte[] data = new byte[1024];
+            byte[] data = new byte[1024+4];
             evt.Packet.CopyTo(data);
 
             BitBuffer buffer = new BitBuffer(128);
