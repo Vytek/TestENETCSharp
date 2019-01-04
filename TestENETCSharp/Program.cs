@@ -2,6 +2,8 @@
 using ENETCSharp;
 using Event = ENETCSharp.Event;
 using EventType = ENETCSharp.EventType;
+using NetStack.Compression;
+using NetStack.Serialization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,6 +39,40 @@ namespace TestENETCSharp
             SENDTOUID = 3 //NOT IMPLEMENTED
         }
 
+        /// <summary>
+        /// Creates the request packet login.
+        /// </summary>
+        /// <returns>The request packet login.</returns>
+        /// <param name="Message">Message.</param>
+        /// <param name="_toPeerID">To peer identifier.</param>
+        public static Packet CreateRequestPacketLogin(String Message, uint _toPeerID)
+        {
+            byte[] data = new byte[1024];
+            BitBuffer buffer = new BitBuffer(128);
+            buffer.AddInt((int)OpCodes.PlayerLogin)
+                .AddUInt(_toPeerID)
+                .AddString(Message)
+                .ToArray(data);
+
+            Packet packet = default(Packet);
+            packet.Create(data);
+            return packet;
+        }
+
+        /// <summary>
+        /// Sends to server.
+        /// </summary>
+        /// <param name="_packet">Packet.</param>
+        /// <param name="toPeerServer">To peer server.</param>
+        private static void SendToServer(Packet _packet, Peer toPeerServer)
+        {
+            toPeerServer.Send((byte)ChannelTypes.SENDTOSERVER, ref _packet);
+        }
+
+        /// <summary>
+        /// The entry point of the program, where the program control starts and ends.
+        /// </summary>
+        /// <param name="args">The command-line arguments.</param>
         static void Main(string[] args)
         {
             Library.Initialize();
@@ -49,9 +85,8 @@ namespace TestENETCSharp
                 client.Create();
 
                 Peer peer = client.Connect(address);
-
-                //Start login to server
-                //
+                //Send Request once
+                bool SendRequestPacketLogin = true;
 
                 Event netEvent;
                 while (!Console.KeyAvailable)
@@ -65,6 +100,13 @@ namespace TestENETCSharp
 
                         case EventType.Connect:
                             Console.WriteLine("Client connected to server - ID: " + peer.ID);
+                            if (SendRequestPacketLogin)
+                            {
+                                //Start login to server
+                                Console.WriteLine("Try to send Login Packet to Server.");
+                                SendToServer(CreateRequestPacketLogin("Login;Password", peer.ID), peer);
+                                SendRequestPacketLogin = false;
+                            }
                             break;
 
                         case EventType.Disconnect:
