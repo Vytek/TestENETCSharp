@@ -44,13 +44,13 @@ namespace TestENETCSharp
         /// </summary>
         /// <returns>The request packet login.</returns>
         /// <param name="Message">Message.</param>
-        /// <param name="_toPeerID">To peer identifier.</param>
-        public static Packet CreateRequestPacketLogin(String Message, uint _toPeerID)
+        /// <param name="_fromPeerID">To peer identifier.</param>
+        public static Packet CreateRequestPacketLogin(String Message, uint _fromPeerID)
         {
             byte[] data = new byte[1024];
             BitBuffer buffer = new BitBuffer(128);
             buffer.AddInt((int)OpCodes.PlayerLogin)
-                .AddUInt(_toPeerID)
+                .AddUInt(_fromPeerID)
                 .AddString(Message)
                 .ToArray(data);
 
@@ -64,9 +64,9 @@ namespace TestENETCSharp
         /// </summary>
         /// <param name="_packet">Packet.</param>
         /// <param name="toPeerServer">To peer server.</param>
-        private static void SendToServer(Packet _packet, Peer toPeerServer)
+        private static bool SendToServer(Packet _packet, Peer toPeerServer)
         {
-            toPeerServer.Send((byte)ChannelTypes.SENDTOSERVER, ref _packet);
+            return toPeerServer.Send((byte)ChannelTypes.SENDTOSERVER, ref _packet);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace TestENETCSharp
                 Event netEvent;
                 while (!Console.KeyAvailable)
                 {
-                    client.Service(15, out netEvent);
+                    client.Service(0, out netEvent);
 
                     switch (netEvent.Type)
                     {
@@ -104,7 +104,15 @@ namespace TestENETCSharp
                             {
                                 //Start login to server
                                 Console.WriteLine("Try to send Login Packet to Server.");
-                                SendToServer(CreateRequestPacketLogin("Login;Password", peer.ID), peer);
+                                if (SendToServer(CreateRequestPacketLogin("Login;Password", peer.ID), peer))
+                                {
+                                    Console.WriteLine("Message sent!");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Message NOT sent!");
+                                }
+                                client.Flush();
                                 SendRequestPacketLogin = false;
                             }
                             break;

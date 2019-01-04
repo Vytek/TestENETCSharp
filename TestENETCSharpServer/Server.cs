@@ -108,7 +108,7 @@ namespace TestENETCSharpServer
                 Event netEvent;
                 while (!Console.KeyAvailable)
                 {
-                    server.Service(15, out netEvent);
+                    server.Service(0, out netEvent);
 
                     switch (netEvent.Type)
                     {
@@ -119,6 +119,8 @@ namespace TestENETCSharpServer
                             Console.WriteLine("Client connected - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
                             //Add Peer connected to General List
                             AddClientPeer(netEvent.Peer, netEvent.Peer.ID);
+                            Console.WriteLine($"Numbers Peer(s): {server.PeersCount.ToString()}");
+                            SendToSingleClient(CreateAnswerPacketLogin("OK", netEvent.Peer.ID), netEvent.Peer.ID);
                             break;
 
                         case EventType.Disconnect:
