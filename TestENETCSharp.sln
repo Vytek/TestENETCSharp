@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ENETCSharp", "ENETCSharp\EN
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestENETCSharpServer", "TestENETCSharpServer\TestENETCSharpServer.csproj", "{B2C21D19-AAF9-410C-87B4-33A02333FBFE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestNETCSharpServerAkkaNet", "TestNETCSharpServerAkkaNet\TestNETCSharpServerAkkaNet.csproj", "{606DCC3D-65F0-4ED9-B81E-48BE2606D03A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,14 @@ Global
 		{B2C21D19-AAF9-410C-87B4-33A02333FBFE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B2C21D19-AAF9-410C-87B4-33A02333FBFE}.Release|x64.ActiveCfg = Release|Any CPU
 		{B2C21D19-AAF9-410C-87B4-33A02333FBFE}.Release|x64.Build.0 = Release|Any CPU
+		{606DCC3D-65F0-4ED9-B81E-48BE2606D03A}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{606DCC3D-65F0-4ED9-B81E-48BE2606D03A}.Debug|Any CPU.Build.0 = Debug|x64
+		{606DCC3D-65F0-4ED9-B81E-48BE2606D03A}.Debug|x64.ActiveCfg = Debug|x64
+		{606DCC3D-65F0-4ED9-B81E-48BE2606D03A}.Debug|x64.Build.0 = Debug|x64
+		{606DCC3D-65F0-4ED9-B81E-48BE2606D03A}.Release|Any CPU.ActiveCfg = Release|x64
+		{606DCC3D-65F0-4ED9-B81E-48BE2606D03A}.Release|Any CPU.Build.0 = Release|x64
+		{606DCC3D-65F0-4ED9-B81E-48BE2606D03A}.Release|x64.ActiveCfg = Release|x64
+		{606DCC3D-65F0-4ED9-B81E-48BE2606D03A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

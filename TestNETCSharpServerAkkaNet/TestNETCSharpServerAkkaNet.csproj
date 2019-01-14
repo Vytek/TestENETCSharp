@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{606DCC3D-65F0-4ED9-B81E-48BE2606D03A}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>TestNETCSharpServerAkkaNet</RootNamespace>
+    <AssemblyName>TestNETCSharpServerAkkaNet</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExternalConsole>true</ExternalConsole>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExternalConsole>true</ExternalConsole>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>..\packages\System.Collections.Immutable.1.5.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="Akka">
+      <HintPath>..\packages\Akka.1.3.11\lib\net45\Akka.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Server.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="NetStack\Source\NetStack.Buffers\ArrayPool.cs" />
+    <Compile Include="NetStack\Source\NetStack.Buffers\ArrayPoolEventSource.cs" />
+    <Compile Include="NetStack\Source\NetStack.Buffers\DefaultArrayPool.cs" />
+    <Compile Include="NetStack\Source\NetStack.Buffers\DefaultArrayPoolBucket.cs" />
+    <Compile Include="NetStack\Source\NetStack.Buffers\Utilities.cs" />
+    <Compile Include="NetStack\Source\NetStack.Compression\BoundedRange.cs" />
+    <Compile Include="NetStack\Source\NetStack.Compression\HalfPrecision.cs" />
+    <Compile Include="NetStack\Source\NetStack.Compression\SmallestThree.cs" />
+    <Compile Include="NetStack\Source\NetStack.Serialization\BitBuffer.cs" />
+    <Compile Include="NetStack\Source\NetStack.Threading\ConcurrentBuffer.cs" />
+    <Compile Include="NetStack\Source\NetStack.Threading\ConcurrentPool.cs" />
+    <Compile Include="NetStack\Source\NetStack.Unsafe\Memory.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NetStack\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ENETCSharp\ENETCSharp.csproj">
+      <Project>{C1169E78-D0D4-435C-9792-AC12DA38556E}</Project>
+      <Name>ENETCSharp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>
