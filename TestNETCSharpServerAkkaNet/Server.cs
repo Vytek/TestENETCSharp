@@ -8,7 +8,6 @@ using NetStack.Serialization;
 using Akka;
 using Akka.Actor;
 
-
 namespace TestNETCSharpServerAkkaNet
 {
     class Server
@@ -56,7 +55,7 @@ namespace TestNETCSharpServerAkkaNet
 
         public BoundedRange[] Range = new BoundedRange[3];
 
-        private List<BaseClient> m_entities = new List<BaseClient>();
+        private static List<BaseClient> m_entities = new List<BaseClient>();
 
         //Add Peer connected to General List
         /// <summary>
@@ -149,6 +148,101 @@ namespace TestNETCSharpServerAkkaNet
                 Library.Deinitialize();
                 //Exit 0
                 Environment.Exit(0);
+            }
+        }
+
+        //Akka Actor
+        public class ENETUntypedActor : UntypedActor
+        {
+            private Event _evt;
+
+            public ENETUntypedActor(Event evt)
+            {
+                _evt = evt;
+            }
+
+            protected override void OnReceive(object message)
+            {
+                switch (message)
+                {
+                    case Event evt:
+                        HandleENETMessage(evt);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            /// <summary>
+            /// Sends to single client.
+            /// </summary>
+            /// <param name="_packet">Packet.</param>
+            /// <param name="_toPeerID">To peer identifier.</param>
+            private void SendToSingleClient(Packet _packet, uint _toPeerID)
+            {
+                for (int i = 0; i < Server.m_entities.Count; i++)
+                {
+                    if (Server.m_entities[i].PeerID == _toPeerID)
+                    {
+                        Server.m_entities[i].PeerClient.Send((byte)ChannelTypes.SENDTOSERVER, ref _packet);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Creates the answer packet login.
+            /// </summary>
+            /// <returns>The answer packet login.</returns>
+            /// <param name="Message">Message.</param>
+            /// <param name="_toPeerID">To peer identifier.</param>
+            public Packet CreateAnswerPacketLogin(String Message, uint _toPeerID)
+            {
+                byte[] data = new byte[16];
+                BitBuffer buffer = new BitBuffer(128);
+                buffer.AddInt((int)OpCodes.PlayerLogin)
+                    .AddUInt(_toPeerID)
+                    .AddString(Message)
+                    .ToArray(data);
+
+                Packet packet = default(Packet);
+                packet.Create(data);
+                return packet;
+            }
+
+            private void HandleENETMessage(Event evt)
+            {
+                Console.WriteLine($"\nreceived by {Context.Self.Path}" +
+                              $"\nsender {Sender.Path}\n");
+
+                byte[] data = new byte[1024 + 4];
+                evt.Packet.CopyTo(data);
+
+                BitBuffer buffer = new BitBuffer(128);
+                buffer.FromArray(data, evt.Packet.Length);
+
+                OpCodes op = (OpCodes)buffer.ReadInt();
+                uint id = buffer.ReadUInt();
+                if (DEBUG)
+                {
+                    Console.WriteLine($"OPCODE: {op.ToString()}");
+                    Console.WriteLine($"PEERID: {id.ToString()}");
+                }
+
+                if (evt.Peer.ID != id)
+                {
+                    Console.WriteLine($"ID Mismatch! {evt.Peer.ID} vs. {id}");
+                    return;
+                }
+
+                Packet packet = evt.Packet;
+
+                switch (op)
+                {
+                    case OpCodes.PlayerLogin:
+                        //Answer OK
+                        SendToSingleClient(CreateAnswerPacketLogin("OK", evt.Peer.ID), evt.Peer.ID);
+                        break;
+                }
             }
         }
 
@@ -259,8 +353,8 @@ namespace TestNETCSharpServerAkkaNet
         /// <param name="args">The command-line arguments.</param>
         public static void Main(string[] args)
         {
-            Server ServeENETCSharp = new Server();
-            ServeENETCSharp.Start();
+            Server ServerENETCSharp = new Server();
+            ServerENETCSharp.Start();
         }
     }
 }
