@@ -111,7 +111,7 @@ namespace TestNETCSharpServerAkkaNet
                 Event netEvent;
                 //Creating Actors
                 Console.WriteLine("Creating Actors ");
-                IActorRef ENETEventUntypedActor = system.ActorOf<ENETUntypedActor>("ENTEventUntypedActor");
+                IActorRef ENETEventUntypedActor = system.ActorOf<ENETUntypedActor>("ENETEventUntypedActor");
 
                 while (!Console.KeyAvailable)
                 {
@@ -147,7 +147,7 @@ namespace TestNETCSharpServerAkkaNet
                             //Process packet received!
                             //ProcessPacket(netEvent);
                             ENETEventUntypedActor.Tell(netEvent);
-                            netEvent.Packet.Dispose();
+                            //netEvent.Packet.Dispose();
                             break;
                     }
                 }
@@ -257,6 +257,9 @@ namespace TestNETCSharpServerAkkaNet
                         SendToSingleClient(CreateAnswerPacketLogin("OK", evt.Peer.ID), evt.Peer.ID);
                         break;
                 }
+
+                //Destroy all 
+                evt.Packet.Dispose();
             }
         }
 
