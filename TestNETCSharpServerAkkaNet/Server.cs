@@ -94,6 +94,10 @@ namespace TestNETCSharpServerAkkaNet
             Range[1] = new BoundedRange(-RandomRange, RandomRange, 0.05f);
             Range[2] = new BoundedRange(-RandomRange, RandomRange, 0.05f);
 
+            //Create Akka actors system
+            Console.WriteLine("Creating Actor System");
+            ActorSystem system = ActorSystem.Create("MyActorSystem");
+
             Library.Initialize();
             using (Host server = new Host())
             {
@@ -105,6 +109,10 @@ namespace TestNETCSharpServerAkkaNet
                 server.Create(address, 10, 10);
 
                 Event netEvent;
+                //Creating Actors
+                Console.WriteLine("Creating Actors ");
+                IActorRef ENETEventUntypedActor = system.ActorOf<ENETUntypedActor>("ENTEventUntypedActor");
+
                 while (!Console.KeyAvailable)
                 {
                     server.Service(0, out netEvent);
@@ -137,7 +145,8 @@ namespace TestNETCSharpServerAkkaNet
                         case EventType.Receive:
                             Console.WriteLine("Packet received from - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP + ", Channel ID: " + netEvent.ChannelID + ", Data length: " + netEvent.Packet.Length);
                             //Process packet received!
-                            ProcessPacket(netEvent);
+                            //ProcessPacket(netEvent);
+                            ENETEventUntypedActor.Tell(netEvent);
                             netEvent.Packet.Dispose();
                             break;
                     }
@@ -155,6 +164,11 @@ namespace TestNETCSharpServerAkkaNet
         public class ENETUntypedActor : UntypedActor
         {
             private Event _evt;
+
+            public ENETUntypedActor()
+            {
+                //nope
+            }
 
             public ENETUntypedActor(Event evt)
             {
