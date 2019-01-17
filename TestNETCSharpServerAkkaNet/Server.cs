@@ -134,12 +134,14 @@ namespace TestNETCSharpServerAkkaNet
                             Console.WriteLine("Client disconnected - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
                             //Remove Peer disconnected / Timeouted to General List
                             RemoveClientPeer(netEvent.Peer, netEvent.Peer.ID);
+                            Console.WriteLine($"Numbers Peer(s): {server.PeersCount.ToString()}");
                             break;
 
                         case EventType.Timeout:
                             Console.WriteLine("Client timeout - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
                             //Remove Peer disconnected / Timeouted to General List
                             RemoveClientPeer(netEvent.Peer, netEvent.Peer.ID);
+                            Console.WriteLine($"Numbers Peer(s): {server.PeersCount.ToString()}");
                             break;
 
                         case EventType.Receive:
@@ -188,6 +190,34 @@ namespace TestNETCSharpServerAkkaNet
             }
 
             /// <summary>
+            /// Sends to all.
+            /// </summary>
+            /// <param name="_packet">Packet.</param>
+            private void SendToAll(Packet _packet)
+            {
+                for (int i = 0; i < Server.m_entities.Count; i++)
+                {
+                    Server.m_entities[i].PeerClient.Send((byte)ChannelTypes.SENDTOALL, ref _packet);
+                }
+            }
+
+            /// <summary>
+            /// Sends to others.
+            /// </summary>
+            /// <param name="_packet">Packet.</param>
+            /// <param name="_ExcludedPeerID">Exclude peer identifier.</param>
+            private void SendToOthers(Packet _packet, uint _ExcludedPeerID)
+            {
+                for (int i = 0; i < m_entities.Count; i++)
+                {
+                    if (Server.m_entities[i].PeerID != _ExcludedPeerID)
+                    {
+                        Server.m_entities[i].PeerClient.Send((byte)ChannelTypes.SENDTOOTHER, ref _packet);
+                    }
+                }
+            }
+
+            /// <summary>
             /// Sends to single client.
             /// </summary>
             /// <param name="_packet">Packet.</param>
@@ -230,6 +260,7 @@ namespace TestNETCSharpServerAkkaNet
 
                 byte[] data = new byte[1024 + 4];
                 evt.Packet.CopyTo(data);
+                //var test = evt.Packet.Length;
 
                 BitBuffer buffer = new BitBuffer(128);
                 buffer.FromArray(data, evt.Packet.Length);
