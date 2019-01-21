@@ -170,15 +170,23 @@ namespace NetStack.Serialization {
 			Add(1, 1);
 
 			int numChunks = (nextPosition >> 5) + 1;
+			int length = data.Length;
 
 			for (int i = 0; i < numChunks; i++) {
 				int dataIdx = i * 4;
 				uint chunk = chunks[i];
 
-				data[dataIdx] = (byte)(chunk);
-				data[dataIdx + 1] = (byte)(chunk >> 8);
-				data[dataIdx + 2] = (byte)(chunk >> 16);
-				data[dataIdx + 3] = (byte)(chunk >> 24);
+				if (dataIdx < length)
+					data[dataIdx] = (byte)(chunk);
+
+				if (dataIdx + 1 < length)
+					data[dataIdx + 1] = (byte)(chunk >> 8);
+
+				if (dataIdx + 2 < length)
+					data[dataIdx + 2] = (byte)(chunk >> 16);
+
+				if (dataIdx + 3 < length)
+					data[dataIdx + 3] = (byte)(chunk >> 24);
 			}
 
 			return Length;
@@ -192,7 +200,19 @@ namespace NetStack.Serialization {
 
 			for (int i = 0; i < numChunks; i++) {
 				int dataIdx = i * 4;
-				uint chunk = (uint)data[dataIdx] | (uint)data[dataIdx + 1] << 8 | (uint)data[dataIdx + 2] << 16 | (uint)data[dataIdx + 3] << 24;
+				uint chunk = 0;
+
+				if (dataIdx < length)
+					chunk = (uint)data[dataIdx];
+
+				if (dataIdx + 1 < length)
+					chunk = chunk | (uint)data[dataIdx + 1] << 8;
+
+				if (dataIdx + 2 < length)
+					chunk = chunk | (uint)data[dataIdx + 2] << 16;
+
+				if (dataIdx + 3 < length)
+					chunk = chunk | (uint)data[dataIdx + 3] << 24;
 
 				chunks[i] = chunk;
 			}
@@ -208,15 +228,23 @@ namespace NetStack.Serialization {
 				Add(1, 1);
 
 				int numChunks = (nextPosition >> 5) + 1;
+				int length = data.Length;
 
 				for (int i = 0; i < numChunks; i++) {
 					int dataIdx = i * 4;
 					uint chunk = chunks[i];
 
-					data[dataIdx] = (byte)(chunk);
-					data[dataIdx + 1] = (byte)(chunk >> 8);
-					data[dataIdx + 2] = (byte)(chunk >> 16);
-					data[dataIdx + 3] = (byte)(chunk >> 24);
+					if (dataIdx < length)
+						data[dataIdx] = (byte)(chunk);
+
+					if (dataIdx + 1 < length)
+						data[dataIdx + 1] = (byte)(chunk >> 8);
+
+					if (dataIdx + 2 < length)
+						data[dataIdx + 2] = (byte)(chunk >> 16);
+
+					if (dataIdx + 3 < length)
+						data[dataIdx + 3] = (byte)(chunk >> 24);
 				}
 
 				return Length;
@@ -230,7 +258,19 @@ namespace NetStack.Serialization {
 
 				for (int i = 0; i < numChunks; i++) {
 					int dataIdx = i * 4;
-					uint chunk = (uint)data[dataIdx] | (uint)data[dataIdx + 1] << 8 | (uint)data[dataIdx + 2] << 16 | (uint)data[dataIdx + 3] << 24;
+					uint chunk = 0;
+
+					if (dataIdx < length)
+						chunk = (uint)data[dataIdx];
+
+					if (dataIdx + 1 < length)
+ 						chunk = chunk | (uint)data[dataIdx + 1] << 8;
+
+					if (dataIdx + 2 < length)
+						chunk = chunk | (uint)data[dataIdx + 2] << 16;
+
+					if (dataIdx + 3 < length)
+						chunk = chunk | (uint)data[dataIdx + 3] << 24;
 
 					chunks[i] = chunk;
 				}
@@ -291,6 +331,52 @@ namespace NetStack.Serialization {
 		#if NETSTACK_INLINING
 			[MethodImpl(256)]
 		#endif
+		public BitBuffer AddShort(short value) {
+			AddInt(value);
+
+			return this;
+		}
+
+		#if NETSTACK_INLINING
+			[MethodImpl(256)]
+		#endif
+		public short ReadShort() {
+			return (short)ReadInt();
+		}
+
+		#if NETSTACK_INLINING
+			[MethodImpl(256)]
+		#endif
+		public short PeekShort() {
+			return (short)PeekInt();
+		}
+
+		#if NETSTACK_INLINING
+			[MethodImpl(256)]
+		#endif
+		public BitBuffer AddUShort(ushort value) {
+			AddUInt(value);
+
+			return this;
+		}
+
+		#if NETSTACK_INLINING
+			[MethodImpl(256)]
+		#endif
+		public ushort ReadUShort() {
+			return (ushort)ReadUInt();
+		}
+
+		#if NETSTACK_INLINING
+			[MethodImpl(256)]
+		#endif
+		public ushort PeekUShort() {
+			return (ushort)PeekUInt();
+		}
+
+		#if NETSTACK_INLINING
+			[MethodImpl(256)]
+		#endif
 		public BitBuffer AddInt(int value) {
 			uint zigzag = (uint)((value << 1) ^ (value >> 31));
 
@@ -346,13 +432,13 @@ namespace NetStack.Serialization {
 		public uint ReadUInt() {
 			uint buffer = 0x0u;
 			uint value = 0x0u;
-			int s = 0;
+			int shift = 0;
 
 			do {
 				buffer = Read(8);
 
-				value |= (buffer & 0x7Fu) << s;
-				s += 7;
+				value |= (buffer & 0x7Fu) << shift;
+				shift += 7;
 			}
 
 			while ((buffer & 0x80u) > 0);
@@ -366,6 +452,71 @@ namespace NetStack.Serialization {
 		public uint PeekUInt() {
 			int tempPosition = readPosition;
 			uint value = ReadUInt();
+
+			readPosition = tempPosition;
+
+			return value;
+		}
+
+		#if NETSTACK_INLINING
+			[MethodImpl(256)]
+		#endif
+		public BitBuffer AddLong(long value) {
+			AddInt((int)(value & uint.MaxValue));
+			AddInt((int)(value >> 32));
+
+			return this;
+		}
+
+		#if NETSTACK_INLINING
+			[MethodImpl(256)]
+		#endif
+		public long ReadLong() {
+			int low = ReadInt();
+			int high = ReadInt();
+			long value = high;
+
+			return value << 32 | (uint)low;
+		}
+
+		#if NETSTACK_INLINING
+			[MethodImpl(256)]
+		#endif
+		public long PeekLong() {
+			int tempPosition = readPosition;
+			long value = ReadLong();
+
+			readPosition = tempPosition;
+
+			return value;
+		}
+
+		#if NETSTACK_INLINING
+			[MethodImpl(256)]
+		#endif
+		public BitBuffer AddULong(ulong value) {
+			AddUInt((uint)(value & uint.MaxValue));
+			AddUInt((uint)(value >> 32));
+
+			return this;
+		}
+
+		#if NETSTACK_INLINING
+			[MethodImpl(256)]
+		#endif
+		public ulong ReadULong() {
+			uint low = ReadUInt();
+			uint high = ReadUInt();
+
+			return (ulong)high << 32 | low;
+		}
+
+		#if NETSTACK_INLINING
+			[MethodImpl(256)]
+		#endif
+		public ulong PeekULong() {
+			int tempPosition = readPosition;
+			ulong value = ReadULong();
 
 			readPosition = tempPosition;
 
