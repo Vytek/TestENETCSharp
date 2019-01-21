@@ -67,7 +67,7 @@ namespace TestENETCSharp
         private static bool SendToServer(Packet _packet, Peer toPeerServer)
         {
             Console.WriteLine($"Client {toPeerServer.State.ToString()}");
-            //return toPeerServer.Send((byte)ChannelTypes.SENDTOSERVER, ref _packet);
+            //return toPeerServer.Send((byte)ChannelTypes.SENDTOSERVER, ref _packet);                                                      
             return toPeerServer.Send((Byte)ChannelTypes.SENDTOSERVER, ref _packet);
         }
 
